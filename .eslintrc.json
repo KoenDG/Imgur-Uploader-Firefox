@@ -3,16 +3,20 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es6": true
+    "node": true,
+    "es6": true,
+    "jquery": true
   },
   "globals": {
     "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
+    "SharedArrayBuffer": "readonly",
+    "browser": "readonly"
   },
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 6
   },
   "rules": {
+    "max-len": 0,
     "indent": [
       "error",
       4
@@ -42,6 +46,7 @@
     "prefer-destructuring": "off",
     "no-unused-expressions": 0,
     "function-paren-newline": "off",
-    "implicit-arrow-linebreak": 0
+    "implicit-arrow-linebreak": 0,
+    "quote-props": "off"
   }
 }

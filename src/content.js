@@ -1,6 +1,6 @@
-const copy = require("./copy.js");
+const copy = require('./copy.js');
 
-browser.runtime.onMessage.addListener(request => {
+browser.runtime.onMessage.addListener((request) => {
     console.log(request);
     copy.setCopy(request.link);
 });

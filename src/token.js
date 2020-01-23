@@ -1,15 +1,16 @@
-let href = location.href;
-if(href.indexOf("state=FirefoxAddonAuth") > -1){
-    let infoStr = href.split("state=FirefoxAddonAuth#")[1].split("&");
-    let info = {"task": "auth"};
-    infoStr.forEach(item => {
-        let [key, value] = item.split("=");
+const href = location.href;
+
+if (href.indexOf('state=FirefoxAddonAuth') > -1) {
+    const infoStr = href.split('state=FirefoxAddonAuth#')[1].split('&');
+    const info = { 'task': 'auth' };
+    infoStr.forEach((item) => {
+        const [key, value] = item.split('=');
         info[key] = value;
     });
     console.log(info);
-    browser.runtime.sendMessage(info).then(()=>{
-        console.log("success");
+    browser.runtime.sendMessage(info).then(() => {
+        console.log('success');
     }, () => {
-        console.log("failed");
+        console.log('failed');
     });
 }
