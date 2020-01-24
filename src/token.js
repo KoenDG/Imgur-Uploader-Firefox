@@ -1,4 +1,4 @@
-const href = location.href;
+const href = window.location.href;
 
 if (href.indexOf('state=FirefoxAddonAuth') > -1) {
     const infoStr = href.split('state=FirefoxAddonAuth#')[1].split('&');

@@ -20,11 +20,11 @@ browser.storage.local.get('firefox-uploader-imgur').then((value) => {
         // This does not seem like an efficient way to get key/value.
         console.log(items[x]);
         if (actionAbleItem(items[x])) {
-            $(document.getElementById('image-list')).append(`<div class="callout small image-url" data-closable data-url="'${items[x].link}'">\n
-            <p><img src="https://i.imgur.com/'${items[x].id}'.jpg" class="preview"> <span class="link">'${items[x].link}'</span><button class="copy-clipboard" id="'${items[x].link}'-copy">Copy</button></p>\n
-            <button class="close-button" aria-label="Dismiss alert" type="button" id="'${items[x].id}'-close" data-close>\n
-            <span aria-hidden="true" class="close-button-bubble">&times;</span>\n
-            </button>\n
+            $(document.getElementById('image-list')).append(`<div class="callout small image-url" data-closable data-url="'${items[x].link}'">\
+            <p><img src="https://i.imgur.com/'${items[x].id}'.jpg" class="preview"> <span class="link">'${items[x].link}'</span><button class="copy-clipboard" id="'${items[x].link}'-copy">Copy</button></p>\
+            <button class="close-button" aria-label="Dismiss alert" type="button" id="'${items[x].id}'-close" data-close>\
+            <span aria-hidden="true" class="close-button-bubble">&times;</span>\
+            </button>\
         </div>`);
         }
     });

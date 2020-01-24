@@ -37,6 +37,10 @@ function hasClass(elem, className) {
     return elem.className.split(' ').indexOf(className) > -1;
 }
 
+function usable(x) {
+    return !(x === undefined || x.link === undefined);
+}
+
 function loadLocal() {
     document.getElementById('image-list').innerHTML = '';
     document.getElementById('image-page').innerHTML = '';
@@ -47,7 +51,8 @@ function loadLocal() {
         const page = Math.ceil(image.length / pageSegment);
         if (page > 0) {
             if (page > 7) {
-                const start = currentPage <= 4 ? 1 : ((currentPage + 3) > page ? page - 6 : currentPage - 3);
+                const test = (currentPage + 3) > page ? page - 6 : currentPage - 3;
+                const start = currentPage <= 4 ? 1 : test;
                 const end = start + 6;
                 for (let i = start; i <= end; i += 1) {
                     $(document.getElementById('image-page')).append(`<li><a class="page-href"  attr-page="${i}"  aria-label="Page ${i}">${i}</a></li>`);
@@ -58,23 +63,25 @@ function loadLocal() {
                 }
             }
             $(document.querySelector(`[aria-label='Page ${currentPage}']`)).parent().addClass('current');
-            for (const x of value['firefox-uploader-imgur'].slice((currentPage - 1) * pageSegment, currentPage * pageSegment)) {
-                console.log(x);
-                if (x === undefined || x.link === undefined) {
-                    continue;
-                }
-                $(document.getElementById('image-list')).append(`\
-                    <div class="cell">\
-                      <div class="card">\
-                        <img src="${x.link}">\
-                        <div class="card-section">\
-                            <h6>${x.link}</h6>\
-                            <button type="button" class="alert button delete float-right" data-id="${x.id}" data-delete="${x.deletehash}">Delete From Imgur</button>\
+
+            const items = value['firefox-uploader-imgur'].slice((currentPage - 1) * pageSegment, currentPage * pageSegment);
+            Object.keys(items).forEach((x) => {
+                console.log(items[x]);
+                if (usable(items[x])) {
+                    $(document.getElementById('image-list'))
+                        .append(`\
+                        <div class="cell">\
+                          <div class="card">\
+                            <img src="${items[x].link}">\
+                            <div class="card-section">\
+                                <h6>${items[x].link}</h6>\
+                                <button type="button" class="alert button delete float-right" data-id="${items[x].id}" data-delete="${items[x].deletehash}">Delete From Imgur</button>\
+                            </div>\
+                          </div>\
                         </div>\
-                      </div>\
-                    </div>\
-                `);
-            }
+                    `);
+                }
+            });
         }
     });
 }
@@ -93,10 +100,9 @@ function loadAccount() {
             const image = data.data;
             const page = Math.ceil(image.length / pageSegment);
             if (page > 0) {
-                console.log('test');
-
                 if (page > 7) {
-                    const start = currentPage <= 4 ? 1 : ((currentPage + 3) > page ? page - 6 : currentPage - 3);
+                    const test = (currentPage + 3) > page ? page - 6 : currentPage - 3;
+                    const start = currentPage <= 4 ? 1 : test;
                     const end = start + 6;
                     for (let i = start; i <= end; i += 1) {
                         $(document.getElementById('image-page')).append(`<li><a class="page-href"  attr-page="${i}" aria-label="Page ${i}">${i}</a></li>`);
@@ -109,23 +115,25 @@ function loadAccount() {
                 $(document.querySelector(`[aria-label='Page ${currentPage}']`)).parent().addClass('current');
                 // $(document.querySelector("a.page-href"))
 
-                for (const x of image.slice((currentPage - 1) * pageSegment, currentPage * pageSegment)) {
-                    console.log(x);
-                    if (x === undefined || x.link === undefined) {
-                        continue;
-                    }
-                    $(document.getElementById('image-list')).append(`\
-                        <div class="cell">\
-                          <div class="card">\
-                            <img src="${x.link}">\
-                            <div class="card-section">\
-                                <h6>${x.link}</h6>\
-                                <button type="button" class="alert button delete float-right" data-id="${x.id}" data-delete="${x.deletehash}">Delete From Imgur</button>\
+                const items = image.slice((currentPage - 1) * pageSegment, currentPage * pageSegment);
+
+                Object.keys(items).forEach((x) => {
+                    console.log(items[x]);
+                    if (usable(items[x])) {
+                        $(document.getElementById('image-list'))
+                            .append(`\
+                            <div class="cell">\
+                              <div class="card">\
+                                <img src="${items[x].link}">\
+                                <div class="card-section">\
+                                    <h6>${items[x].link}</h6>\
+                                    <button type="button" class="alert button delete float-right" data-id="${items[x].id}" data-delete="${items[x].deletehash}">Delete From Imgur</button>\
+                                </div>\
+                              </div>\
                             </div>\
-                          </div>\
-                        </div>\
-                    `);
-                }
+                        `);
+                    }
+                });
             }
         });
     });
