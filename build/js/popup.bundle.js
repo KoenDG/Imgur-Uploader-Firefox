@@ -36,12 +36,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -59,12 +79,207 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/app.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./src/app.js":
+/*!********************!*\
+  !*** ./src/app.js ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Storage = __webpack_require__(/*! ./storage.js */ "./src/storage.js");
+var storage = new Storage();
+var copy = __webpack_require__(/*! ./copy.js */ "./src/copy.js");
+
+browser.storage.local.get('firefox-uploader-imgur').then(function (value) {
+    console.log(value);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = value['firefox-uploader-imgur'].reverse()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var x = _step.value;
+
+            console.log(x);
+            if (x == undefined || x.link == undefined || x.viewable == false) {
+                continue;
+            }
+            $(document.getElementById("image-list")).append('<div class="callout small image-url" data-closable data-url="' + x.link + '">\
+            <p><img src="https://i.imgur.com/' + x.id + '.jpg" class="preview"> <span class="link">' + x.link + '</span><button class="copy-clipboard" id="' + x.link + '-copy">Copy</button></p>\
+            <button class="close-button" aria-label="Dismiss alert" type="button"  id="' + x.id + '-close" data-close>\
+            <span aria-hidden="true" class="close-button-bubble">&times;</span>\
+            </button>\
+        </div>');
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+});
+
+browser.storage.local.get('firefox-uploader-auto-copy').then(function (value) {
+    document.getElementById('clipboard-switch').checked = value['firefox-uploader-auto-copy'];
+});
+
+function hasClass(elem, className) {
+    return elem.className.split(' ').indexOf(className) > -1;
+}
+document.addEventListener('click', function (e) {
+    if (hasClass(e.target, 'close-button')) {
+        console.log(e.target.id);
+        storage.change(e.target.id.split("-close")[0], { "viewable": false });
+        //storage.remove(e.target.id.split("-close")[0]);
+    }
+    if (hasClass(e.target, 'close-button-bubble')) {
+        console.log(e.target.id);
+        storage.change(e.target.parentNode.id.split("-close")[0], { "viewable": false });
+    }
+    if (hasClass(e.target, 'copy-clipboard')) {
+        //var link = "https://i.imgur.com/"+e.target.id.split("-copy")[0]+".jpg";
+        var link = e.target.id.split("-copy")[0];
+        copy.setCopy(link);
+    }
+    if (hasClass(e.target, 'clear-all')) {
+        //storage.removeAll();
+
+        var _link = document.querySelectorAll(".image-url");
+        var manipulateList = [];
+        for (var i = 0; i < _link.length; i++) {
+            console.log(_link[i].querySelector(".close-button").id);
+            manipulateList.push(_link[i].querySelector(".close-button").id.split("-close")[0]);
+            _link[i].parentNode.removeChild(_link[i]);
+        }
+        storage.change(manipulateList, { "viewable": false });
+    }
+}, false);
+
+document.getElementById('clipboard-switch').addEventListener('change', function (e) {
+    console.log(e.target.checked);
+    browser.storage.local.set({ 'firefox-uploader-auto-copy': e.target.checked });
+});
+
+document.addEventListener('mouseover', function (e) {
+    if (hasClass(e.target, 'preview')) {
+        console.log(e.pageX);
+        console.log(e.pageY);
+        console.log(e.target.attributes);
+        var viewer = $(document.querySelector("div.viewer"));
+        viewer.show().css({
+            left: "100px",
+            top: e.pageY - 30
+        });
+
+        viewer.children("img").attr("src", e.target.getAttribute("src"));
+    }
+}, false);
+
+document.addEventListener('mouseout', function (e) {
+    if (hasClass(e.target, 'preview')) {
+        $(document.querySelector("div.viewer")).hide();
+    }
+}, false);
+
+document.querySelector("#add-image").addEventListener('click', function () {
+
+    var createData = {
+        type: "detached_panel",
+        titlePreface: "Upload Image",
+        url: "../templates/panel.html",
+        width: 400,
+        height: 200,
+        left: 100,
+        allowScriptsToClose: true
+    };
+
+    var creating = browser.windows.create(createData);
+    console.log("test");
+});
+
+document.querySelector("#options").addEventListener('click', function () {
+    browser.tabs.create({
+        url: "settings/options.html"
+    });
+});
+
+/***/ }),
+
+/***/ "./src/copy.js":
+/*!*********************!*\
+  !*** ./src/copy.js ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports.setCopy = function (text) {
+    var id = "clipboard-textarea-hidden-id";
+    var existsTextarea = document.getElementById(id);
+
+    if (!existsTextarea) {
+        console.log("Creating textarea");
+        var textarea = document.createElement("textarea");
+        textarea.id = id;
+        textarea.style.position = 'fixed';
+        textarea.style.top = -100;
+        textarea.style.left = -100;
+        textarea.style.width = '1px';
+        textarea.style.height = '1px';
+        textarea.style.padding = 0;
+        textarea.style.border = 'none';
+        textarea.style.outline = 'none';
+        textarea.style.boxShadow = 'none';
+        textarea.style.background = 'transparent';
+        document.querySelector("body").appendChild(textarea);
+
+        existsTextarea = document.getElementById(id);
+    } else {
+        console.log("The textarea already exists :3");
+    }
+    console.log(existsTextarea);
+    existsTextarea.value = text;
+    existsTextarea.select();
+
+    try {
+        var status = document.execCommand('copy');
+        if (!status) {
+            console.error("Cannot copy text");
+        } else {
+            console.log("The text is now on the clipboard");
+        }
+    } catch (err) {
+        console.log('Unable to copy.');
+    }
+};
+
+/***/ }),
+
+/***/ "./src/storage.js":
+/*!************************!*\
+  !*** ./src/storage.js ***!
+  \************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -150,6 +365,7 @@ module.exports = function () {
             if (!imageId instanceof Array) {
                 imageId = [imageId];
             }
+
             var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
                 var send = [];
                 var _iteratorNormalCompletion2 = true;
@@ -206,186 +422,7 @@ module.exports = function () {
     return Storage;
 }();
 
-/***/ }),
-/* 1 */,
-/* 2 */,
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports.setCopy = function (text) {
-    var id = "clipboard-textarea-hidden-id";
-    var existsTextarea = document.getElementById(id);
-
-    if (!existsTextarea) {
-        console.log("Creating textarea");
-        var textarea = document.createElement("textarea");
-        textarea.id = id;
-        textarea.style.position = 'fixed';
-        textarea.style.top = -100;
-        textarea.style.left = -100;
-        textarea.style.width = '1px';
-        textarea.style.height = '1px';
-        textarea.style.padding = 0;
-        textarea.style.border = 'none';
-        textarea.style.outline = 'none';
-        textarea.style.boxShadow = 'none';
-        textarea.style.background = 'transparent';
-        document.querySelector("body").appendChild(textarea);
-
-        existsTextarea = document.getElementById(id);
-    } else {
-        console.log("The textarea already exists :3");
-    }
-    console.log(existsTextarea);
-    existsTextarea.value = text;
-    existsTextarea.select();
-
-    try {
-        var status = document.execCommand('copy');
-        if (!status) {
-            console.error("Cannot copy text");
-        } else {
-            console.log("The text is now on the clipboard");
-        }
-    } catch (err) {
-        console.log('Unable to copy.');
-    }
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Storage = __webpack_require__(0);
-var storage = new Storage();
-var copy = __webpack_require__(3);
-
-browser.storage.local.get('firefox-uploader-imgur').then(function (value) {
-    console.log(value);
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = value['firefox-uploader-imgur'].reverse()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var x = _step.value;
-
-            console.log(x);
-            if (x == undefined || x.link == undefined || x.viewable == false) {
-                continue;
-            }
-            $(document.getElementById("image-list")).append('<div class="callout small image-url" data-closable data-url="' + x.link + '">\
-            <p><img src="https://i.imgur.com/' + x.id + '.jpg" class="preview"> <span class="link">' + x.link + '</span><button class="copy-clipboard" id="' + x.link + '-copy">Copy</button></p>\
-            <button class="close-button" aria-label="Dismiss alert" type="button"  id="' + x.id + '-close" data-close>\
-            <span aria-hidden="true" class="close-button-bubble">&times;</span>\
-            </button>\
-        </div>');
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-});
-
-browser.storage.local.get('firefox-uploader-auto-copy').then(function (value) {
-    document.getElementById('clipboard-switch').checked = value['firefox-uploader-auto-copy'];
-});
-
-function hasClass(elem, className) {
-    return elem.className.split(' ').indexOf(className) > -1;
-}
-document.addEventListener('click', function (e) {
-    if (hasClass(e.target, 'close-button')) {
-        console.log(e.target.id);
-        storage.change(e.target.id.split("-close")[0], { "viewable": false });
-        //storage.remove(e.target.id.split("-close")[0]);
-    }
-    if (hasClass(e.target, 'close-button-bubble')) {
-        console.log(e.target.id);
-        storage.change(e.target.parentNode.id.split("-close")[0], { "viewable": false });
-    }
-    if (hasClass(e.target, 'copy-clipboard')) {
-        //var link = "https://i.imgur.com/"+e.target.id.split("-copy")[0]+".jpg";
-        var link = e.target.id.split("-copy")[0];
-        copy.setCopy(link);
-    }
-    if (hasClass(e.target, 'clear-all')) {
-        //storage.removeAll();
-
-        var link = document.querySelectorAll(".image-url");
-        var manipulateList = [];
-        for (var i = 0; i < link.length; i++) {
-            console.log(link[i].querySelector(".close-button").id);
-            manipulateList.push(link[i].querySelector(".close-button").id.split("-close")[0]);
-            link[i].parentNode.removeChild(link[i]);
-        }
-        storage.change(manipulateList, { "viewable": false });
-    }
-}, false);
-
-document.getElementById('clipboard-switch').addEventListener('change', function (e) {
-    console.log(e.target.checked);
-    browser.storage.local.set({ 'firefox-uploader-auto-copy': e.target.checked });
-});
-
-document.addEventListener('mouseover', function (e) {
-    if (hasClass(e.target, 'preview')) {
-        console.log(e.pageX);
-        console.log(e.pageY);
-        console.log(e.target.attributes);
-        var viewer = $(document.querySelector("div.viewer"));
-        viewer.show().css({
-            left: "100px",
-            top: e.pageY - 30
-        });
-
-        viewer.children("img").attr("src", e.target.getAttribute("src"));
-    }
-}, false);
-
-document.addEventListener('mouseout', function (e) {
-    if (hasClass(e.target, 'preview')) {
-        $(document.querySelector("div.viewer")).hide();
-    }
-}, false);
-
-document.querySelector("#add-image").addEventListener('click', function () {
-
-    var createData = {
-        type: "detached_panel",
-        titlePreface: "Upload Image",
-        url: "../templates/panel.html",
-        width: 400,
-        height: 200,
-        left: 100,
-        allowScriptsToClose: true
-    };
-    var creating = browser.windows.create(createData);
-    console.log("test");
-});
-
-document.querySelector("#options").addEventListener('click', function () {
-    browser.tabs.create({
-        url: "settings/options.html"
-    });
-});
-
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=popup.bundle.js.map

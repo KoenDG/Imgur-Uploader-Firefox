@@ -1,6 +1,8 @@
 const path = require("path")
 
 module.exports = {
+    mode: 'development',
+
     entry: {
         popup: './src/app.js',
         upload_panel: './src/upload_panel.js',
@@ -17,13 +19,13 @@ module.exports = {
     devtool: 'source-map',
 
     module:{
-        loaders:[
+        rules:[
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel-loader",
                 query: {
-                    presets: ['babel-preset-es2015']
+                    presets: ['babel-preset-env']
                 }
             }
         ]

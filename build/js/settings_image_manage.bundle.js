@@ -36,12 +36,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -59,297 +79,18 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/settings/image_manage.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/******/ ({
 
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-module.exports = function () {
-    function Storage() {
-        _classCallCheck(this, Storage);
-
-        browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
-            if (Object.getOwnPropertyNames(obj).length == 0) {
-                console.log("test");
-                browser.storage.local.set({
-                    'firefox-uploader-imgur': []
-                });
-            }
-        });
-    }
-
-    _createClass(Storage, [{
-        key: "add",
-        value: function add(image) {
-            return new Promise(function (resolve, reject) {
-                var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
-                    var send = obj['firefox-uploader-imgur'];
-
-                    image['viewable'] = true;
-
-                    send.push(image);
-                    console.log(send);
-                    browser.storage.local.set({
-                        'firefox-uploader-imgur': send
-                    }).then(function () {
-                        resolve("test");
-                    });
-                });
-            });
-        }
-    }, {
-        key: "remove",
-        value: function remove(imageId) {
-            var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
-                var send = [];
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = obj['firefox-uploader-imgur'][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var img = _step.value;
-
-                        if (img.id != imageId) {
-                            send.push(img);
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-
-                browser.storage.local.set({
-                    'firefox-uploader-imgur': send
-                });
-            });
-        }
-    }, {
-        key: "change",
-        value: function change(imageId, status) {
-            if (!imageId instanceof Array) {
-                imageId = [imageId];
-            }
-            var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
-                var send = [];
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
-
-                try {
-                    for (var _iterator2 = obj['firefox-uploader-imgur'][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var img = _step2.value;
-
-                        if (imageId.indexOf(img.id) >= 0) {
-                            console.log(imageId);
-                            console.log(status);
-                            for (var property in status) {
-                                if (status.hasOwnProperty(property)) {
-                                    img[property] = status[property];
-                                }
-                            }
-                            console.log(img);
-                            send.push(img);
-                        } else {
-                            send.push(img);
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
-                    }
-                }
-
-                browser.storage.local.set({
-                    'firefox-uploader-imgur': send
-                });
-            });
-        }
-    }, {
-        key: "removeAll",
-        value: function removeAll() {
-            browser.storage.local.set({
-                'firefox-uploader-imgur': []
-            });
-        }
-    }]);
-
-    return Storage;
-}();
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var request = __webpack_require__(2);
-module.exports = function () {
-    function Uploader() {
-        var _this = this;
-
-        _classCallCheck(this, Uploader);
-
-        browser.storage.local.get("firefox-uploader-client-id").then(function (result) {
-            var backupList = ['a6bebdd6a51f656', 'f752792c52f4cdf', '474d8a50e7e752d', '9089d7837e30269', '6c6fa522da181b8', 'bbf63f907ae5614', '480391db79e87b6', 'ea76f402e22007a'];
-            if (typeof result['firefox-uploader-client-id'] !== "undefined") {
-                _this.clientID = result['firefox-uploader-client-id'];
-                console.log(result['firefox-uploader-client-id']);
-            } else {
-                _this.clientID = backupList[Math.floor(Math.random() * backupList.length)];
-            }
-            console.log(_this.clientID);
-        });
-    }
-
-    _createClass(Uploader, [{
-        key: "update",
-        value: function update() {
-            var _this2 = this;
-
-            browser.storage.local.get("firefox-uploader-client-id").then(function (result) {
-                var backupList = ['a6bebdd6a51f656', 'f752792c52f4cdf', '474d8a50e7e752d', '9089d7837e30269', '6c6fa522da181b8', 'bbf63f907ae5614', '480391db79e87b6', 'ea76f402e22007a'];
-                if (typeof result['firefox-uploader-client-id'] !== "undefined") {
-                    _this2.clientID = result['firefox-uploader-client-id'];
-                    console.log(result['firefox-uploader-client-id']);
-                } else {
-                    _this2.clientID = backupList[Math.floor(Math.random() * backupList.length)];
-                }
-                console.log(_this2.clientID);
-            });
-        }
-    }, {
-        key: "uuid",
-        value: function uuid() {
-
-            var d = Date.now();
-            if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-                d += performance.now(); //use high-precision timer if available
-            }
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = (d + Math.random() * 16) % 16 | 0;
-                d = Math.floor(d / 16);
-                return (c === 'x' ? r : r & 0x3 | 0x8).toString(16);
-            });
-        }
-    }, {
-        key: "imageReader",
-        value: function imageReader(image) {
-            var _this3 = this;
-
-            var reader = new FileReader();
-            return new Promise(function (resolve, reject) {
-                reader.onload = function (event) {
-                    resolve(event.target.result.split("base64,")[1]);
-                };
-
-                reader.onerror = function () {
-                    return reject(_this3);
-                };
-
-                reader.readAsDataURL(image);
-            });
-        }
-    }, {
-        key: "uploadToImgur",
-        value: function uploadToImgur(file) {
-            var _this4 = this;
-
-            var that = this;
-            return new Promise(function (resolve, reject) {
-                console.log(_this4);
-                console.log(that.uuid());
-                var options = {
-                    url: "https://api.imgur.com/3/image",
-                    headers: {
-                        authorization: "Client-ID " + that.clientID
-                    },
-                    json: {
-                        image: file
-                    }
-
-                };
-                console.log(options);
-                request.post(options, function (error, res, body) {
-                    console.log(body.data);
-                    if (body.data.error) {
-                        reject(body.data);
-                    } else {
-                        resolve(body.data);
-                    }
-                });
-            });
-        }
-    }, {
-        key: "uploader",
-        value: function uploader(image) {
-            return this.imageReader(image).then(this.uploadToImgur.bind(this));
-        }
-    }, {
-        key: "remove",
-        value: function remove(deletehash) {
-            var that = this;
-            return new Promise(function (resolve, reject) {
-                var options = {
-                    method: "delete",
-                    url: "https://api.imgur.com/3/image/" + deletehash,
-                    headers: {
-                        authorization: "Client-ID " + that.clientID
-                    }
-
-                };
-                console.log(options);
-                request(options, function (error, res, body) {
-                    var result = JSON.parse(body);
-                    if (!result.data) {
-                        reject(result);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            });
-        }
-    }]);
-
-    return Uploader;
-}();
-
-/***/ }),
-/* 2 */
+/***/ "./node_modules/browser-request/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/browser-request/index.js ***!
+  \***********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Browser Request
@@ -374,15 +115,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-    } else if (typeof exports === 'object') {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like enviroments that support module.exports,
-        // like Node.
-        module.exports = factory();
-    } else {
-        // Browser globals (root is window)
-        root.returnExports = factory();
-  }
+    } else {}
 }(this, function () {
 // UMD HEADER END
 
@@ -852,20 +585,167 @@ function b64_enc (data) {
 
 
 /***/ }),
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */
+
+/***/ "./src/imgur.js":
+/*!**********************!*\
+  !*** ./src/imgur.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var request = __webpack_require__(/*! browser-request */ "./node_modules/browser-request/index.js");
+module.exports = function () {
+    function Uploader() {
+        var _this = this;
+
+        _classCallCheck(this, Uploader);
+
+        browser.storage.local.get("firefox-uploader-client-id").then(function (result) {
+            var backupList = ['a6bebdd6a51f656', 'f752792c52f4cdf', '474d8a50e7e752d', '9089d7837e30269', '6c6fa522da181b8', 'bbf63f907ae5614', '480391db79e87b6', 'ea76f402e22007a'];
+            if (typeof result['firefox-uploader-client-id'] !== "undefined") {
+                _this.clientID = result['firefox-uploader-client-id'];
+                console.log(result['firefox-uploader-client-id']);
+            } else {
+                _this.clientID = backupList[Math.floor(Math.random() * backupList.length)];
+            }
+            console.log(_this.clientID);
+        });
+    }
+
+    _createClass(Uploader, [{
+        key: "update",
+        value: function update() {
+            var _this2 = this;
+
+            browser.storage.local.get("firefox-uploader-client-id").then(function (result) {
+                var backupList = ['a6bebdd6a51f656', 'f752792c52f4cdf', '474d8a50e7e752d', '9089d7837e30269', '6c6fa522da181b8', 'bbf63f907ae5614', '480391db79e87b6', 'ea76f402e22007a'];
+                if (typeof result['firefox-uploader-client-id'] !== "undefined") {
+                    _this2.clientID = result['firefox-uploader-client-id'];
+                    console.log(result['firefox-uploader-client-id']);
+                } else {
+                    _this2.clientID = backupList[Math.floor(Math.random() * backupList.length)];
+                }
+                console.log(_this2.clientID);
+            });
+        }
+    }, {
+        key: "uuid",
+        value: function uuid() {
+
+            var d = Date.now();
+            if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+                d += performance.now(); //use high-precision timer if available
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c === 'x' ? r : r & 0x3 | 0x8).toString(16);
+            });
+        }
+    }, {
+        key: "imageReader",
+        value: function imageReader(image) {
+            var _this3 = this;
+
+            var reader = new FileReader();
+            return new Promise(function (resolve, reject) {
+                reader.onload = function (event) {
+                    resolve(event.target.result.split("base64,")[1]);
+                };
+
+                reader.onerror = function () {
+                    return reject(_this3);
+                };
+
+                reader.readAsDataURL(image);
+            });
+        }
+    }, {
+        key: "uploadToImgur",
+        value: function uploadToImgur(file) {
+            var _this4 = this;
+
+            var that = this;
+            return new Promise(function (resolve, reject) {
+                console.log(_this4);
+                console.log(that.uuid());
+                var options = {
+                    url: "https://api.imgur.com/3/image",
+                    headers: {
+                        authorization: "Client-ID " + that.clientID
+                    },
+                    json: {
+                        image: file
+                    }
+
+                };
+                console.log(options);
+                request.post(options, function (error, res, body) {
+                    console.log(body.data);
+                    if (body.data.error) {
+                        reject(body.data);
+                    } else {
+                        resolve(body.data);
+                    }
+                });
+            });
+        }
+    }, {
+        key: "uploader",
+        value: function uploader(image) {
+            return this.imageReader(image).then(this.uploadToImgur.bind(this));
+        }
+    }, {
+        key: "remove",
+        value: function remove(deletehash) {
+            var that = this;
+            return new Promise(function (resolve, reject) {
+                var options = {
+                    method: "delete",
+                    url: "https://api.imgur.com/3/image/" + deletehash,
+                    headers: {
+                        authorization: "Client-ID " + that.clientID
+                    }
+
+                };
+                console.log(options);
+                request(options, function (error, res, body) {
+                    var result = JSON.parse(body);
+                    if (!result.data) {
+                        reject(result);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        }
+    }]);
+
+    return Uploader;
+}();
+
+/***/ }),
+
+/***/ "./src/settings/image_manage.js":
+/*!**************************************!*\
+  !*** ./src/settings/image_manage.js ***!
+  \**************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 $(document).foundation();
-var Uploader = __webpack_require__(1);
-var Storage = __webpack_require__(0);
+var Uploader = __webpack_require__(/*! ./../imgur.js */ "./src/imgur.js");
+var Storage = __webpack_require__(/*! ./../storage.js */ "./src/storage.js");
 // fill in default value
 var uploader = new Uploader();
 var storage = new Storage();
@@ -1068,6 +948,156 @@ document.addEventListener('click', function (e) {
     }
 }, false);
 
+/***/ }),
+
+/***/ "./src/storage.js":
+/*!************************!*\
+  !*** ./src/storage.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+    function Storage() {
+        _classCallCheck(this, Storage);
+
+        browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
+            if (Object.getOwnPropertyNames(obj).length == 0) {
+                console.log("test");
+                browser.storage.local.set({
+                    'firefox-uploader-imgur': []
+                });
+            }
+        });
+    }
+
+    _createClass(Storage, [{
+        key: "add",
+        value: function add(image) {
+            return new Promise(function (resolve, reject) {
+                var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
+                    var send = obj['firefox-uploader-imgur'];
+
+                    image['viewable'] = true;
+
+                    send.push(image);
+                    console.log(send);
+                    browser.storage.local.set({
+                        'firefox-uploader-imgur': send
+                    }).then(function () {
+                        resolve("test");
+                    });
+                });
+            });
+        }
+    }, {
+        key: "remove",
+        value: function remove(imageId) {
+            var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
+                var send = [];
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = obj['firefox-uploader-imgur'][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var img = _step.value;
+
+                        if (img.id != imageId) {
+                            send.push(img);
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+
+                browser.storage.local.set({
+                    'firefox-uploader-imgur': send
+                });
+            });
+        }
+    }, {
+        key: "change",
+        value: function change(imageId, status) {
+            if (!imageId instanceof Array) {
+                imageId = [imageId];
+            }
+
+            var checkStorage = browser.storage.local.get("firefox-uploader-imgur").then(function (obj) {
+                var send = [];
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = obj['firefox-uploader-imgur'][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var img = _step2.value;
+
+                        if (imageId.indexOf(img.id) >= 0) {
+                            console.log(imageId);
+                            console.log(status);
+                            for (var property in status) {
+                                if (status.hasOwnProperty(property)) {
+                                    img[property] = status[property];
+                                }
+                            }
+                            console.log(img);
+                            send.push(img);
+                        } else {
+                            send.push(img);
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
+
+                browser.storage.local.set({
+                    'firefox-uploader-imgur': send
+                });
+            });
+        }
+    }, {
+        key: "removeAll",
+        value: function removeAll() {
+            browser.storage.local.set({
+                'firefox-uploader-imgur': []
+            });
+        }
+    }]);
+
+    return Storage;
+}();
+
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=settings_image_manage.bundle.js.map
